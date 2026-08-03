@@ -1,0 +1,9 @@
+<resources>
+
+    <!-- Anders als Focus folgt Dill dem System: eine Verwaltungs-App soll sich neutral anfühlen. -->
+    <style name="Theme.Dill" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+    </style>
+
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <color name="primary">#FF00696D</color>
+    <color name="on_primary">#FFFFFFFF</color>
+    <!-- Status in der Liste: unverarbeitet fällt auf, erledigt tritt zurück. -->
+    <color name="status_new">#FFB05F00</color>
+    <color name="status_done">#FF3E6942</color>
+    <color name="launcher_bg">#FFF1F8E9</color>
+</resources>

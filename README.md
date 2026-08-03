@@ -1,93 +1,128 @@
 # dill
 
+An App to handle Doctor Bills. Bills are photographed and the picture optimized. 
 
+## Goals
 
-## Getting started
+This project is in alpha, the goals are
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+* manage PDFs oder Images of doctor bills
+* store some meta infos (billing date, cost, uploaded to insurer and/or beihilfe)
+* local storage only for now
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## What it does
 
-## Add your files
+* Photograph doctor bills with the built-in document scanner — the picture is cropped,
+  deskewed and enhanced by an on-device ML model, nothing leaves the phone
+* Existing PDFs (e.g. already lying in the hand-over folder) can be imported as bills too;
+  their pages are rendered and OCRed just like scans
+* Stores every bill as a PDF, local only, in the app's private storage
+* Reads the scan with on-device OCR and suggests billing date, doctor and cost;
+  the suggestions can be reviewed and corrected per bill
+* New bills are marked *unverarbeitet*; one action copies all unprocessed PDFs into a
+  hand-over folder on the phone, where the HUK and Beihilfe apps can pick them up for upload
+* Bills can also be shared straight into the HUK and Beihilfe apps via the Android share
+  sheet — both register as share targets for PDFs and jump right into their submission flow
+* Per bill, checkboxes track whether it has been submitted to HUK and/or Beihilfe
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## How it works
 
+1. **Scannen** — der Scanner-Button startet den ML-Kit-Dokumentenscanner. Der erkennt die
+   Blattränder, schneidet zu, entzerrt und bereitet das Bild auf. Das läuft komplett
+   lokal auf dem Gerät (via Google Play Services), nichts geht in die Cloud.
+2. **PDF** — der Scanner liefert direkt ein PDF, das nur im privaten App-Speicher landet
+   (`files/bills/`). Kein Cloud-Backup, kein Netzwerkzugriff.
+3. **Auslesen** — die On-Device-Texterkennung von ML Kit (gebündeltes Modell, offline)
+   liest die Seiten. Aus dem Text werden per Heuristik **Rechnungsdatum**, **Arzt/Praxis**
+   und **Rechnungsbetrag** vorgeschlagen — in der Detailansicht prüfen und ggf. korrigieren.
+4. **Unverarbeitet** — jede neue Rechnung startet als *unverarbeitet*. Neben dem Scannen
+   können über „PDFs importieren…“ auch vorhandene PDFs übernommen werden (die Seiten
+   werden dafür gerastert und genauso ausgelesen); die Originaldatei bleibt unangetastet.
+   Der Verarbeitet-Status lässt sich in der Detailansicht auch von Hand setzen — nützlich
+   für importierte PDFs, die schon eingereicht sind.
+5. **Einreichen** — „Einreichen…“ in der Detailansicht (bzw. „Unverarbeitete teilen…“ im
+   Menü) öffnet das Android-Share-Sheet. Die Apps der HUK und der bayerischen Beihilfe
+   nehmen PDFs als Share-Ziel an und springen direkt in ihren Einreichungs-Dialog.
+   Ob eingereicht wurde, wird pro Rechnung per Häkchen gepflegt.
+6. **Export** — alternativ kopiert „Unverarbeitete exportieren“ alle unverarbeiteten PDFs
+   in einen frei wählbaren Übergabeordner (z. B. `Downloads/Arztrechnungen`). Von dort
+   können die Apps der HUK und der Beihilfe die Dateien über ihren Dateiwähler einlesen.
+   Die Rechnungen gelten danach als *exportiert*.
+
+Die exportierten Dateien bekommen sprechende, sortierbare Namen:
+`Arztrechnung_2026-07-15_Dr-med-Musterfrau_25-64-EUR.pdf`
+
+## Technik
+
+* Java, ein Modul, keine Architektur-Frameworks — wie in den Schwesterprojekten
+* minSdk 26, targetSdk 34, AGP 8.5.2
+* [ML Kit Document Scanner](https://developers.google.com/ml-kit/vision/doc-scanner) —
+  Scan-UI, Zuschnitt und Bildaufbereitung, braucht keine Kamera-Berechtigung
+* [ML Kit Text Recognition v2](https://developers.google.com/ml-kit/vision/text-recognition/v2)
+  mit gebündeltem Modell — OCR offline
+* Metadaten in einer schlichten `bills.json` im App-Speicher, keine Datenbank
+* Export über das Storage Access Framework — die App braucht keinerlei Berechtigungen
+
+## Download
+
+Signierte APKs hängen an den [Releases](https://gitlab.noisebleed.de/pub/dill/-/releases);
+der Direktlink zur jeweiligen Version steht dort als Asset (Paket-Registry-URL, funktioniert
+bei öffentlichem Projekt ohne Anmeldung).
+
+Zum Installieren die Datei auf dem Gerät öffnen. Android fragt einmalig nach der Erlaubnis,
+Apps aus dieser Quelle zu installieren; Play Protect zeigt bei selbst signierten Apps eine
+Warnung, die man bestätigen kann. Voraussetzung ist Android 8 oder neuer.
+
+## Bauen und installieren
+
+```bash
+./gradlew assembleDebug        # braucht JDK 17 und das Android SDK (local.properties)
+./gradlew testDebugUnitTest    # Tests für die Extraktions-Heuristiken
+adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
-cd existing_repo
-git remote add origin https://gitlab.noisebleed.de/pub/dill.git
-git branch -M main
-git push -uf origin main
+
+## Release
+
+Der Signaturschlüssel liegt **nicht im Repo** (das ist öffentlich), sondern in
+`~/Documents/Android/own/dill/` — per Syncthing zwischen den eigenen Rechnern gespiegelt und
+im Backup. `keystore.properties` daneben nennt Alias und Passwörter, `storeFile` wird relativ
+zu dieser Datei aufgelöst. Ein abweichender Pfad geht über `-Pdill.signing=…`; fehlt der
+Schlüssel ganz, bleibt das Release-APK unsigniert statt den Build zu brechen.
+
+Einmalig erzeugen (Verlust bedeutet, dass alle Nutzer erst deinstallieren müssten):
+
+```bash
+mkdir -p ~/Documents/Android/own/dill && cd ~/Documents/Android/own/dill
+keytool -genkeypair -v -keystore dill-release.jks -alias dill \
+  -keyalg RSA -keysize 4096 -validity 10000
+printf 'storeFile=dill-release.jks\nstorePassword=…\nkeyAlias=dill\nkeyPassword=…\n' \
+  > keystore.properties
 ```
 
-## Integrate with your tools
+## Release über CI
 
-* [Set up project integrations](https://gitlab.noisebleed.de/pub/dill/-/settings/integrations)
+`.gitlab-ci.yml` erledigt das alles selbst, sobald ein Tag der Form `v<Ziffer>` gepusht wird:
+Tests, bauen, signieren, in die Paket-Registry laden, Release mit Asset-Link anlegen. Für
+Branches läuft die Pipeline bewusst gar nicht. Der übliche Ablauf:
 
-## Collaborate with your team
+```bash
+# versionCode und versionName in app/build.gradle anheben, committen
+git tag -a v0.2 -m "Dill 0.2" && git push origin main && git push origin v0.2
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+Zwei Prüfungen brechen den Job absichtlich ab, statt ein kaputtes Release zu veröffentlichen:
+das Umbenennen der APK schlägt fehl, wenn mangels Schlüssel nur `app-release-unsigned.apk`
+entstanden ist, und `versionName` im APK muss zum Tag passen.
 
-## Test and Deploy
+### Einmalige Einrichtung
 
-Use the built-in continuous integration in GitLab.
+Wie bei Focus (dort ausführlich dokumentiert): ein Runner mit Docker-Executor und Tag
+`docker`, dazu geschützte CI-Variablen unter Settings → CI/CD → Variables — alle vier auf
+*protected*, das Tag-Muster `v*` muss geschützt sein:
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+| Variable | Typ | maskiert | Inhalt |
+|---|---|---|---|
+| `ANDROID_KEYSTORE_B64` | File | nein | `base64 -w0 dill-release.jks` |
+| `ANDROID_KEYSTORE_PASSWORD` | Variable | ja | `storePassword` |
+| `ANDROID_KEY_ALIAS` | Variable | nein | `dill` |
+| `ANDROID_KEY_PASSWORD` | Variable | ja | `keyPassword` |

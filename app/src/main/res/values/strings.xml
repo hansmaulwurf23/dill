@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">Dill</string>
+
+    <string name="action_scan">Rechnung scannen</string>
+    <string name="action_export">Unverarbeitete exportieren</string>
+    <string name="action_pick_folder">Übergabeordner wählen…</string>
+    <string name="action_save">Speichern</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_open_pdf">PDF öffnen</string>
+    <string name="action_share">Einreichen…</string>
+    <string name="action_share_all">Unverarbeitete teilen…</string>
+    <string name="share_chooser_title">Einreichen bei…</string>
+
+    <string name="empty_list">Noch keine Rechnungen.\nTipp auf das Scanner-Symbol, um die erste Arztrechnung zu fotografieren.</string>
+
+    <plurals name="subtitle_open">
+        <item quantity="one">%1$d offene Rechnung · %2$s</item>
+        <item quantity="other">%1$d offene Rechnungen · %2$s</item>
+    </plurals>
+    <string name="subtitle_sum_at_least">mind. %1$s</string>
+
+    <string name="detail_title">Rechnung</string>
+    <string name="label_doctor">Arzt / Praxis</string>
+    <string name="label_billing_date">Rechnungsdatum</string>
+    <string name="label_amount">Betrag</string>
+    <string name="label_sent_huk">Bei der HUK eingereicht</string>
+    <string name="label_sent_beihilfe">Bei der Beihilfe eingereicht</string>
+    <string name="label_processed">Verarbeitet — nicht mehr exportieren/teilen</string>
+    <string name="detail_status_new">Unverarbeitet — wartet auf Export</string>
+    <string name="detail_status_exported">In den Übergabeordner exportiert am %1$s</string>
+    <string name="detail_scanned_at">Gescannt am %1$s</string>
+
+    <string name="unknown_doctor">Arzt unbekannt</string>
+    <string name="unknown_date">Datum unbekannt</string>
+    <string name="unknown_amount">Betrag unbekannt</string>
+
+    <string name="status_new">Unverarbeitet</string>
+    <string name="status_exported">Exportiert</string>
+    <string name="status_huk">HUK ✓</string>
+    <string name="status_beihilfe">Beihilfe ✓</string>
+
+    <string name="action_import">PDFs importieren…</string>
+    <string name="hint_importing">PDFs werden importiert und gelesen…</string>
+    <plurals name="hint_imported">
+        <item quantity="one">%d Rechnung importiert</item>
+        <item quantity="other">%d Rechnungen importiert</item>
+    </plurals>
+    <string name="error_import_partial">Nur %1$d von %2$d PDFs importiert</string>
+
+    <string name="hint_processing">Scan wird aufbereitet und gelesen…</string>
+    <string name="hint_exporting">PDFs werden kopiert…</string>
+    <string name="hint_nothing_to_export">Keine unverarbeiteten Rechnungen</string>
+    <plurals name="hint_exported">
+        <item quantity="one">%d Rechnung in den Übergabeordner kopiert</item>
+        <item quantity="other">%d Rechnungen in den Übergabeordner kopiert</item>
+    </plurals>
+
+    <string name="delete_title">Rechnung löschen?</string>
+    <string name="delete_message">Das PDF und alle Angaben zu dieser Rechnung werden entfernt. Bereits exportierte Kopien im Übergabeordner bleiben erhalten.</string>
+    <string name="delete_confirm">Löschen</string>
+
+    <string name="error_scanner_unavailable">Der Dokumentenscanner ist nicht verfügbar (Google Play Services nötig)</string>
+    <string name="error_processing">Der Scan konnte nicht gespeichert werden</string>
+    <string name="error_export_partial">Nur %1$d von %2$d Rechnungen kopiert — Übergabeordner prüfen</string>
+    <string name="error_pdf_missing">Die PDF-Datei fehlt im App-Speicher</string>
+    <string name="error_no_pdf_viewer">Keine App zum Anzeigen von PDFs installiert</string>
+
+    <string name="about">About</string>
+    <!-- Absichtlich englisch und nicht übersetzt: so vom Autor gewünscht. -->
+    <string name="about_built_by">Built by Martin and Claude with ❤️</string>
+    <string name="about_version">Version: %1$s (%2$s)</string>
+</resources>

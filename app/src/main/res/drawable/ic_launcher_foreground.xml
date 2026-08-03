@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ein Dillzweig: Stängel, Blütendolde mit Strahlen und Dolden-Punkten, fiedrige Blättchen. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Hauptstängel -->
+    <path
+        android:pathData="M54,84 C53,72 53,62 54,52"
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round" />
+
+    <!-- Strahlen der großen Dolde -->
+    <path
+        android:pathData="M54,52 L54,36 M54,52 L61,38 M54,52 L47,38 M54,52 L66,43 M54,52 L42,43 M54,52 L69,49 M54,52 L39,49"
+        android:strokeColor="#558B2F"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+
+    <!-- Seitentrieb mit kleiner Dolde -->
+    <path
+        android:pathData="M54,66 C60,64 64,62 68,58 M68,58 L74,52 M68,58 L76,57 M68,58 L71,50"
+        android:strokeColor="#558B2F"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+
+    <!-- Fiedriges Blättchen links -->
+    <path
+        android:pathData="M54,74 L46,68 M54,74 L44,74 M54,74 L47,79"
+        android:strokeColor="#558B2F"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+
+    <!-- Blüten-Punkte der großen Dolde (Dill blüht gelbgrün) -->
+    <path
+        android:fillColor="#C0CA33"
+        android:pathData="M51.5,36a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0
+            M58.5,38a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0
+            M44.5,38a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0
+            M63.5,43a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0
+            M39.5,43a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0
+            M66.5,49a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0
+            M36.5,49a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+
+    <!-- Blüten-Punkte der kleinen Dolde -->
+    <path
+        android:fillColor="#C0CA33"
+        android:pathData="M72.2,52a1.8,1.8 0 1,0 3.6,0a1.8,1.8 0 1,0 -3.6,0
+            M74.2,57a1.8,1.8 0 1,0 3.6,0a1.8,1.8 0 1,0 -3.6,0
+            M69.2,50a1.8,1.8 0 1,0 3.6,0a1.8,1.8 0 1,0 -3.6,0" />
+
+</vector>
