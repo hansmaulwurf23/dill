@@ -23,6 +23,7 @@
     <string name="label_doctor">Arzt / Praxis</string>
     <string name="label_billing_date">Rechnungsdatum</string>
     <string name="label_amount">Betrag</string>
+    <string name="label_paid">Bezahlt — Rechnung überwiesen</string>
     <string name="label_sent_huk">Bei der HUK eingereicht</string>
     <string name="label_sent_beihilfe">Bei der Beihilfe eingereicht</string>
     <string name="label_processed">Verarbeitet — nicht mehr exportieren/teilen</string>
@@ -36,6 +37,7 @@
 
     <string name="status_new">Unverarbeitet</string>
     <string name="status_exported">Exportiert</string>
+    <string name="status_paid">Bezahlt ✓</string>
     <string name="status_huk">HUK ✓</string>
     <string name="status_beihilfe">Beihilfe ✓</string>
 

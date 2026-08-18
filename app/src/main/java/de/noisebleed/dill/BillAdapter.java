@@ -77,6 +77,9 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.Holder> {
 
             StringBuilder state = new StringBuilder();
             state.append(context.getString(bill.exported ? R.string.status_exported : R.string.status_new));
+            if (bill.paid) {
+                state.append("  ·  ").append(context.getString(R.string.status_paid));
+            }
             if (bill.sentHuk) {
                 state.append("  ·  ").append(context.getString(R.string.status_huk));
             }

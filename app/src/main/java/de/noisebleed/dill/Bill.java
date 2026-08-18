@@ -32,6 +32,8 @@ public class Bill {
     /** Vom Nutzer gepflegt: Rechnung in der jeweiligen App eingereicht. */
     public boolean sentHuk;
     public boolean sentBeihilfe;
+    /** Vom Nutzer gepflegt: Rechnung an den Arzt überwiesen. */
+    public boolean paid;
 
     JSONObject toJson() throws JSONException {
         JSONObject o = new JSONObject();
@@ -45,6 +47,7 @@ public class Bill {
         o.put("exportedAt", exportedAt);
         o.put("sentHuk", sentHuk);
         o.put("sentBeihilfe", sentBeihilfe);
+        o.put("paid", paid);
         return o;
     }
 
@@ -60,6 +63,9 @@ public class Bill {
         b.exportedAt = o.optLong("exportedAt");
         b.sentHuk = o.optBoolean("sentHuk");
         b.sentBeihilfe = o.optBoolean("sentBeihilfe");
+        // optBoolean liefert false, wenn das Feld fehlt — Bestandsdaten aus Versionen ohne
+        // "bezahlt" laden damit unverändert.
+        b.paid = o.optBoolean("paid");
         return b;
     }
 

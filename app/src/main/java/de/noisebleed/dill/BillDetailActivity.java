@@ -39,6 +39,7 @@ public class BillDetailActivity extends AppCompatActivity {
     private TextInputEditText editDoctor;
     private TextInputEditText editDate;
     private TextInputEditText editAmount;
+    private CheckBox checkPaid;
     private CheckBox checkHuk;
     private CheckBox checkBeihilfe;
     private CheckBox checkProcessed;
@@ -67,6 +68,7 @@ public class BillDetailActivity extends AppCompatActivity {
         editDoctor = findViewById(R.id.edit_doctor);
         editDate = findViewById(R.id.edit_date);
         editAmount = findViewById(R.id.edit_amount);
+        checkPaid = findViewById(R.id.check_paid);
         checkHuk = findViewById(R.id.check_huk);
         checkBeihilfe = findViewById(R.id.check_beihilfe);
         checkProcessed = findViewById(R.id.check_processed);
@@ -79,6 +81,7 @@ public class BillDetailActivity extends AppCompatActivity {
         if (bill.amountCents > 0) {
             editAmount.setText(String.format(Locale.GERMANY, "%.2f", bill.amountCents / 100.0));
         }
+        checkPaid.setChecked(bill.paid);
         checkHuk.setChecked(bill.sentHuk);
         checkBeihilfe.setChecked(bill.sentBeihilfe);
         checkProcessed.setChecked(bill.exported);
@@ -145,6 +148,7 @@ public class BillDetailActivity extends AppCompatActivity {
         bill.doctor = editDoctor.getText() == null ? "" : editDoctor.getText().toString().trim();
         bill.billingDate = pickedDate == null ? "" : pickedDate.toString();
         bill.amountCents = parseAmountCents(editAmount.getText() == null ? "" : editAmount.getText().toString());
+        bill.paid = checkPaid.isChecked();
         bill.sentHuk = checkHuk.isChecked();
         bill.sentBeihilfe = checkBeihilfe.isChecked();
         // Manuell umschaltbar, z. B. für importierte PDFs, die schon eingereicht sind — sie
