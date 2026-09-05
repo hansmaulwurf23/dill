@@ -75,8 +75,14 @@ Warnung, die man bestätigen kann. Voraussetzung ist Android 8 oder neuer.
 
 ## Bauen und installieren
 
+Gebraucht wird ein **JDK 17**. Das in Android Studio mitgelieferte JBR ist inzwischen ein JDK 25,
+das Gradle 8.7 mit `Unsupported class file major version 69` ablehnt — der frühere Pfad
+`/opt/JetBrains/android-studio/jbr` funktioniert deshalb nicht mehr. Ein JDK 17 gibt es als Temurin
+von [adoptium.net](https://adoptium.net), hier liegt es unter `~/.jdks/jdk-17.0.20.1+1`:
+
 ```bash
-./gradlew assembleDebug        # braucht JDK 17 und das Android SDK (local.properties)
+export JAVA_HOME=~/.jdks/jdk-17.0.20.1+1
+./gradlew assembleDebug        # braucht außerdem das Android SDK (local.properties)
 ./gradlew testDebugUnitTest    # Tests für die Extraktions-Heuristiken
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
