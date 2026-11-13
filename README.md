@@ -121,7 +121,7 @@ GitHub.
 
 ```bash
 # versionCode und versionName in app/build.gradle anheben, committen
-git tag -a v0.3 -m "Dill 0.3" -m "- Was sich geändert hat" && git push origin main v0.3
+git tag -a v0.4 -m "Dill 0.4" -m "- Was sich geändert hat" && git push origin main v0.4
 ```
 
 ## Lizenz
