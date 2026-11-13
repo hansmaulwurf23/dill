@@ -2,6 +2,8 @@
 
 An App to handle Doctor Bills. Bills are photographed and the picture optimized. 
 
+Eine bebilderte Kurzbeschreibung steht in [`docs/README.md`](docs/README.md).
+
 ## Goals
 
 This project is in alpha, the goals are
@@ -65,13 +67,16 @@ Die exportierten Dateien bekommen sprechende, sortierbare Namen:
 
 ## Download
 
-Signierte APKs hängen an den [Releases](https://gitlab.noisebleed.de/pub/dill/-/releases);
-der Direktlink zur jeweiligen Version steht dort als Asset (Paket-Registry-URL, funktioniert
-bei öffentlichem Projekt ohne Anmeldung).
+Signierte APKs hängen an den [Releases](https://github.com/hansmaulwurf23/dill/releases), das
+neueste unter [releases/latest](https://github.com/hansmaulwurf23/dill/releases/latest).
 
-Zum Installieren die Datei auf dem Gerät öffnen. Android fragt einmalig nach der Erlaubnis,
-Apps aus dieser Quelle zu installieren; Play Protect zeigt bei selbst signierten Apps eine
-Warnung, die man bestätigen kann. Voraussetzung ist Android 8 oder neuer.
+Zum Installieren die Datei auf dem Gerät öffnen. Android fragt einmalig nach der Erlaubnis, Apps aus
+dieser Quelle zu installieren; Play Protect zeigt bei selbst signierten Apps eine Warnung, die man
+bestätigen kann. Voraussetzung ist Android 8 oder neuer. Eine neuere Version wird einfach über die
+installierte installiert; die gespeicherten Rechnungen bleiben erhalten.
+
+Bis Version 0.2 lag das Projekt auf gitlab.noisebleed.de (`pub/dill`); das Projekt dort ist
+archiviert, die alten Releases sind hierher übernommen.
 
 ## Bauen und installieren
 
@@ -89,46 +94,36 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ## Release
 
-Der Signaturschlüssel liegt **nicht im Repo** (das ist öffentlich), sondern in
-`~/Documents/Android/own/dill/` — per Syncthing zwischen den eigenen Rechnern gespiegelt und
-im Backup. `keystore.properties` daneben nennt Alias und Passwörter, `storeFile` wird relativ
-zu dieser Datei aufgelöst. Ein abweichender Pfad geht über `-Pdill.signing=…`; fehlt der
+Signaturschlüssel und `keystore.properties` liegen **nicht im Repo**, sondern in
+`~/Documents/Android/own/dill/` (per Syncthing gespiegelt und im Backup); `storeFile` wird relativ
+zur Properties-Datei aufgelöst. Ein abweichender Pfad geht über `-Pdill.signing=…`; fehlt der
 Schlüssel ganz, bleibt das Release-APK unsigniert statt den Build zu brechen.
 
-Einmalig erzeugen (Verlust bedeutet, dass alle Nutzer erst deinstallieren müssten):
+Ohne diesen Schlüssel lässt sich kein Update über eine installierte Version schieben — Verlust
+bedeutet, dass alle Nutzer erst deinstallieren müssten.
+
+Lokal bauen und prüfen:
 
 ```bash
-mkdir -p ~/Documents/Android/own/dill && cd ~/Documents/Android/own/dill
-keytool -genkeypair -v -keystore dill-release.jks -alias dill \
-  -keyalg RSA -keysize 4096 -validity 10000
-printf 'storeFile=dill-release.jks\nstorePassword=…\nkeyAlias=dill\nkeyPassword=…\n' \
-  > keystore.properties
+JAVA_HOME=~/.jdks/jdk-17.0.20.1+1 ./gradlew assembleRelease
+apksigner verify --print-certs app/build/outputs/apk/release/app-release.apk
 ```
 
-## Release über CI
+`.github/workflows/release.yml` testet, baut, signiert und veröffentlicht, sobald ein Tag `v<Ziffer>`
+gepusht wird. Der Text des annotierten Tags (ohne die erste Zeile) wird zur Release-Beschreibung.
+Zwei Prüfungen brechen absichtlich ab, statt ein kaputtes Release zu veröffentlichen: ein
+unsigniertes APK und ein `versionName`, der nicht zum Tag passt.
 
-`.gitlab-ci.yml` erledigt das alles selbst, sobald ein Tag der Form `v<Ziffer>` gepusht wird:
-Tests, bauen, signieren, in die Paket-Registry laden, Release mit Asset-Link anlegen. Für
-Branches läuft die Pipeline bewusst gar nicht. Der übliche Ablauf:
+Dafür braucht es die Repository-Secrets `ANDROID_KEYSTORE_B64` (`base64 -w0 dill-release.jks`),
+`ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`dill`) und `ANDROID_KEY_PASSWORD`, gesetzt mit
+`~/ops-scripts/android-github-secrets.sh dill`; damit liegt eine zweite Kopie des Schlüssels bei
+GitHub.
 
 ```bash
 # versionCode und versionName in app/build.gradle anheben, committen
-git tag -a v0.2 -m "Dill 0.2" && git push origin main && git push origin v0.2
+git tag -a v0.3 -m "Dill 0.3" -m "- Was sich geändert hat" && git push origin main v0.3
 ```
 
-Zwei Prüfungen brechen den Job absichtlich ab, statt ein kaputtes Release zu veröffentlichen:
-das Umbenennen der APK schlägt fehl, wenn mangels Schlüssel nur `app-release-unsigned.apk`
-entstanden ist, und `versionName` im APK muss zum Tag passen.
+## Lizenz
 
-### Einmalige Einrichtung
-
-Wie bei Focus (dort ausführlich dokumentiert): ein Runner mit Docker-Executor und Tag
-`docker`, dazu geschützte CI-Variablen unter Settings → CI/CD → Variables — alle vier auf
-*protected*, das Tag-Muster `v*` muss geschützt sein:
-
-| Variable | Typ | maskiert | Inhalt |
-|---|---|---|---|
-| `ANDROID_KEYSTORE_B64` | File | nein | `base64 -w0 dill-release.jks` |
-| `ANDROID_KEYSTORE_PASSWORD` | Variable | ja | `storePassword` |
-| `ANDROID_KEY_ALIAS` | Variable | nein | `dill` |
-| `ANDROID_KEY_PASSWORD` | Variable | ja | `keyPassword` |
+Der Code steht unter der [MIT-Lizenz](LICENSE).
